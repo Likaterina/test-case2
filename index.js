@@ -4,7 +4,7 @@ const morgan = require("morgan")
 const path = require("path")
 
 
-const port = 3000
+const port = 3228
 
 const authRouter = require("./auth/routes")
 

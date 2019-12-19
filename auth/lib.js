@@ -7,7 +7,7 @@ const token = obj => jwt.sign(obj, SALTjwt)
 
 const decode = token => {
     return new Promise((resolve,reject) => {
-        jwt.verify(token, SALTjwt, (err, docoded) => {
+        jwt.verify(token, SALTjwt, (err, decoded) => {
             if (err) {
                 reject (err)
             } 
@@ -26,7 +26,7 @@ const hash = password => {
 }
 
 const authenticate = async (req, res, next) => {
-    const authorization = req.get("Authorezation")
+    const authorization = req.get("Authorization")
     if (!authorization) {
         res.status(403).end()
         return
