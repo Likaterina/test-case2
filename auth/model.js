@@ -10,6 +10,12 @@ const User = db.model(
         password: {
             type: String,
             required: true
+        },
+        isAdmin: {
+            type: Boolean
+        },
+        online: {
+            type: Boolean
         }
     })
 )
