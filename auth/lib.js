@@ -1,29 +1,29 @@
-const Joi = require('joi')
+const crypto = require('crypto')
+const jwt = require('jsonwebtoken')
 
-const username = Joi.string().alphanum().min(3).max(30).required()
+const SALTjwt = 'reactcal'
 
-const password = Joi.string()
-  .regex(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/)
-  .options({
-    language: {
-      string: {
-        regex: {
-          base: message
-        }
-      }
-    }
-})
+const token = obj => jwt.sign(obj, SALTjwt)
 
-const signUp = Joi.object().keys({
-  email,
-  username,
-  password
-})
+const decode = token => {
+    return new Promise((resolve,reject) => {
+        jwt.verify(token, SALTjwt, (err, decoded) => {
+            if (err) {
+                reject (err)
+            } 
+            resolve (decoded)
+        })
+    })
+}
 
-const signIn = Joi.object().keys({
-  email,
-  password
-})
+const SALT = 'asslist'
+
+const hash = password => {
+    return crypto
+        .createHash('sha256')
+        .update(password + SALT)
+        .digest("base64")
+}
 
 const authenticate = async (req, res, next) => {
     const authorization = req.get("Authorization")
@@ -41,4 +41,4 @@ const authenticate = async (req, res, next) => {
       }
 }
 
-module.exports = { token, hash, authenticate, signIn, signUp }
+module.exports = { token, hash, authenticate }
