@@ -6,7 +6,7 @@ router.get("/guarded", authenticate, (req, res) => res.send(req.user))
 
 router.post("/login", async (req, res) => {
   const user = await User.findOne({
-    login: req.body.login,
+    login: req.body.login
   })
   if (req.body.login === "admin" && req.body.password === "pass" && !user) {
     const adminNew = new User({
@@ -20,7 +20,7 @@ router.post("/login", async (req, res) => {
 
   if (req.body.login === "admin" && req.body.password === "pass" && user) {
     res.send({
-      token: "Bearer " + token({ _id: user._id, login: user.login })
+      token: token({ _id: user._id, login: user.login })
     })
   }
 
@@ -30,20 +30,18 @@ router.post("/login", async (req, res) => {
       password: hash(req.body.password)
     })
     await newUser.save()
-    res.send(`Hi, new User ${newUser.login}!`)
+    res.send({
+      token: token({ _id: newUser._id, login: newUser.login })
+    })
   }
 
   if (user.password !== req.body.password) {
     res.status(400).send({ message: "Ne zvoni s`uda bolshe" })
-  }
-
-  else {
+  } else {
     res.send({
-      token: "Bearer " + token({ _id: user._id, login: user.login })
+      token: token({ _id: user._id, login: user.login })
     })
-
   }
 })
-
 
 module.exports = router
