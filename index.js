@@ -1,15 +1,33 @@
 const app = require('express')()
 const http = require('http').createServer(app)
 const bodyParser = require("body-parser")
+const session = require('express-session')
 const morgan = require("morgan")
+const cookieParser = require('cookie-parser')
 const path = require("path")
 const io = require('socket.io')(http)
+const cors = require('cors')
+
+app.use(cors())
 
 const PORT = 3228
 
 app.use(bodyParser.json())
 
 app.use(morgan("tiny"))
+
+
+app.use(cookieParser())
+
+app.use(session({
+    key: 'user_sid',
+    secret: 'lolkek',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        expires: 600000
+    }
+}))
 
 const authRouter = require("./auth/routes")
 const messageRouter = require("./messages/routes")
