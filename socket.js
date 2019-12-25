@@ -5,7 +5,7 @@ let users = {}
 const SALTjwt = "reactcal"
 
 const socket = io => {
-  // middleware
+
   io.use((socket, next) => {
     const { token } = socket.handshake.query
     if (jwt.verify(token, SALTjwt)) {
@@ -45,7 +45,6 @@ const socket = io => {
     socket.on("message", msg => {
       console.log(msg)
       socket.broadcast.emit("message", msg)
-      // socket.emit("message", msg)
     })
     console.log(users)
     socket.on("disconnect", () => {

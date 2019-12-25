@@ -16,15 +16,17 @@ router.post("/login", async (req, res) => {
     })
     await adminNew.save()
     res.send("Hi, admin")
+    return
   }
 
-  else if (req.body.login === "admin" && req.body.password === "pass" && user) {
+  if (req.body.login === "admin" && req.body.password === "pass" && user) {
     res.send({
       token: token({ _id: user._id, login: user.login })
     })
+    return
   }
 
-  else if (!user) {
+  if (!user) {
     const newUser = new User({
       login: req.body.login,
       password: hash(req.body.password)
@@ -33,10 +35,12 @@ router.post("/login", async (req, res) => {
     res.send({
       token: token({ _id: newUser._id, login: newUser.login })
     })
+    return
   }
 
-  else if (user.password !== req.body.password) {
+  if (user.password !== req.body.password) {
     res.status(400).send({ message: "Ne zvoni s`uda bolshe" })
+    return
   } 
   else {
     res.send({
