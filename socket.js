@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken")
 const User = require("./auth/model")
+const Message = require('./messages/model')
 
 let users = {}
 const SALTjwt = "reactcal"
@@ -16,8 +17,8 @@ const socket = io => {
 
   io.on("connection", async socket => {
     const { token } = socket.handshake.query
-
     const userFromToken = jwt.verify(token, SALTjwt)
+
     let user = await User.findOne({
       _id: userFromToken._id
     })
@@ -29,27 +30,38 @@ const socket = io => {
 
     user = user.toObject()
 
-    console.log(socket.id)
     socket.id = user._id
     if (users[user._id] == undefined) {
       users[user._id] = { ...user, online: true }
     } else {
       users[user._id].online = true
     }
-    console.log(users)
     console.log(`Hi, we are ${users}`)
+
+    let allMessages = await Message.find({}).lean()
+    
+    console.log("All of them", allMessages)
+    socket.broadcast.emit("allMessages", allMessages)
 
     socket.broadcast.emit("broadcast", users)
     socket.emit("broadcast", users)
 
-    socket.on("message", msg => {
-      console.log(msg)
-      socket.broadcast.emit("message", msg)
+    socket.on("message", async msg => {
+      const message = new Message({
+        userId: user._id,
+        text: msg.text
+      })
+      await message.save()
+
+      socket.broadcast.emit("message", message)
     })
-    console.log(users)
+
+
+
     socket.on("disconnect", () => {
       users[user._id].online = false
       socket.broadcast.emit("broadcast", users)
+      socket.emit("broadcast", users)
       console.log("disconnected")
     })
   })

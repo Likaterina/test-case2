@@ -4,7 +4,7 @@ const Message = db.model(
   "messages",
   new db.Schema({
     userId: db.Schema.Types.ObjectId,
-    title: String,
+    text: String,
     time: Date,
   })
 )
