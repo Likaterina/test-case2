@@ -8,8 +8,8 @@ router.post("/login", async (req, res) => {
   const user = await User.findOne({
     login: req.body.login
   })
-  
-  if (req.body.login === "admin" && hash(req.body.password) === "pass" && !user) {
+
+  if (req.body.login === "admin" && req.body.password === "pass" && !user) {
     const adminNew = new User({
       login: "admin",
       password: "pass",
@@ -17,14 +17,12 @@ router.post("/login", async (req, res) => {
     })
     await adminNew.save()
     res.send("Hi, admin")
-    
   }
 
-  if (req.body.login === "admin" && hash(req.body.password) === "pass" && user) {
+  if (req.body.login === "admin" && req.body.password === "pass" && user) {
     res.send({
       token: token({ _id: user._id, login: user.login })
     })
-    
   }
 
   if (!user) {
@@ -37,15 +35,11 @@ router.post("/login", async (req, res) => {
     res.send({
       token: token({ _id: newUser._id, login: newUser.login })
     })
-    return    
-  }
-
-  else if (user.password !== hash(req.body.password)) {
+    return
+  } else if (user.password !== hash(req.body.password)) {
     console.log("Merry X-mas")
     res.status(400).send({ message: "Ne zvoni s`uda bolshe" })
-    
-  } 
-  else {
+  } else {
     res.send({
       token: token({ _id: user._id, login: user.login })
     })
