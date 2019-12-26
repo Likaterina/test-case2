@@ -1,6 +1,6 @@
 const router = require("express").Router()
 const User = require("./model")
-const { authenticate, token, hash } = require("./lib")
+const { authenticate, getToken, hash } = require("./lib")
 
 router.get("/guarded", authenticate, (req, res) => res.send(req.user))
 
@@ -21,7 +21,7 @@ router.post("/login", async (req, res) => {
 
   if (req.body.login === "admin" && req.body.password === "pass" && user) {
     res.send({
-      token: token({ _id: user._id, login: user.login })
+      token: getToken({ _id: user._id, login: user.login, isAdmin: true })
     })
   }
 
@@ -29,11 +29,12 @@ router.post("/login", async (req, res) => {
     console.log(user)
     const newUser = new User({
       login: req.body.login,
-      password: hash(req.body.password)
+      password: hash(req.body.password),
+      isAdmin: false
     })
     await newUser.save()
     res.send({
-      token: token({ _id: newUser._id, login: newUser.login })
+      token: getToken({ _id: newUser._id, login: newUser.login, isAdmin: false })
     })
     return
   } else if (user.password !== hash(req.body.password)) {
@@ -41,7 +42,7 @@ router.post("/login", async (req, res) => {
     res.status(400).send({ message: "Ne zvoni s`uda bolshe" })
   } else {
     res.send({
-      token: token({ _id: user._id, login: user.login })
+      token: getToken({ _id: user._id, login: user.login, isAdmin: false })
     })
   }
 })

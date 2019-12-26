@@ -3,11 +3,11 @@ const jwt = require("jsonwebtoken")
 
 const SALTjwt = "reactcal"
 
-const token = obj => jwt.sign(obj, SALTjwt)
+const getToken = obj => jwt.sign(obj, SALTjwt)
 
 const decode = token => {
   return new Promise((resolve, reject) => {
-    jwt.verify(token, SALTjwt, (err, decoded) => {
+    return jwt.verify(token, SALTjwt, (err, decoded) => {
       if (err) {
         reject(err)
       }
@@ -26,6 +26,7 @@ const hash = password => {
 }
 
 const authenticate = async (req, res, next) => {
+  console.log('aau', req.get("Authorization"));
   const authorization = req.get("Authorization")
   if (!authorization) {
     res.status(403).end()
@@ -40,4 +41,4 @@ const authenticate = async (req, res, next) => {
   }
 }
 
-module.exports = { token, hash, authenticate }
+module.exports = { getToken, hash, authenticate }
