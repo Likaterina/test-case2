@@ -15,7 +15,12 @@ const User = db.model(
       type: Boolean
     },
     isMuted: {
-      type: Boolean
+      type: Boolean,
+      default: false
+    },
+    isBanned: {
+      type: Boolean,
+      default: false
     }
   })
 )
