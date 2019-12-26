@@ -13,6 +13,9 @@ const User = db.model(
     },
     isAdmin: {
       type: Boolean
+    },
+    isMuted: {
+      type: Boolean
     }
   })
 )

@@ -44,6 +44,7 @@ const socket = io => {
     socket.emit("broadcast", users)
 
     socket.on("message", async msg => {
+      if (user.isMuted) return
       console.log(user.login)
       const message = new Message({
         userId: user._id,
