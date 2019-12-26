@@ -33,7 +33,7 @@ const socket = io => {
 
     user = user.toObject()
     socket.id = user._id
-    
+
     users[user._id] = user
 
     let allMessages = await Message.find({}).lean()
@@ -57,14 +57,17 @@ const socket = io => {
 
     console.log("users", users)
 
-    socket.on("muteUser", mutedUser => {
-      console.log("muted user", users[mutedUser._id])
-      if (users[mutedUser._id]) {
-        users[mutedUser._id].isMuted = true
-      }
+    socket.on("muteUser", async thisUser => {
+      const mutedUser = await User.findOne({
+        _id: thisUser._id
+      })
+      
+      mutedUser.isMuted = true
+      await mutedUser.save()
+      console.log("muted", mutedUser)
     })
 
-    
+
 
     socket.on("disconnect", () => {
       console.log("disconnected")
