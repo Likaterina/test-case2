@@ -32,7 +32,6 @@ const socket = io => {
     }
 
     user = user.toObject()
-    console.log(user.login)
     socket.id = user._id
     
     users[user._id] = user
@@ -56,9 +55,19 @@ const socket = io => {
       socket.broadcast.emit("message", message)
     })
 
+    console.log("users", users)
+
+    socket.on("muteUser", mutedUser => {
+      console.log("muted user", users[mutedUser._id])
+      if (users[mutedUser._id]) {
+        users[mutedUser._id].isMuted = true
+      }
+    })
+
+    
+
     socket.on("disconnect", () => {
       console.log("disconnected")
-      console.log('user._id', user._id);
       console.log(users[user._id]);
       delete users[user._id];
 
